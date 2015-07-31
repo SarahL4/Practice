@@ -1,0 +1,136 @@
+body{
+	background-color: #666;
+}
+ul{
+	padding: 0;
+	margin: 0;
+}
+li{
+	list-style: none;
+}
+img { border: 0; }
+.play{
+	width: 400px;
+	height: 430px;
+	margin:50px auto 0;
+	font: 12px Arial;
+	background: #999;
+	overflow: hidden;
+}
+.big_pic{
+	width: 400px;
+	height: 320px;
+	position: relative;
+	overflow: hidden; 
+	border-bottom: 1px solid #ccc; 
+	background: #222; 
+}
+.big_pic li{
+	/*width: 400px;
+	height: 320px;*/
+	position:absolute;
+	top: 0;
+	left: 0;
+	overflow: hidden;
+	background: url(images/loading.gif) no-repeat center center ;
+}
+.big_pic .prev{
+	background:url(images/btn.gif) no-repeat;
+	width: 60px;
+	height: 60px;
+	position: absolute;
+	top: 130px;
+	left: 10px;
+	cursor: pointer;
+	z-index: 3001;
+	filter:alpha(opacity:0);
+	opacity: 0;
+}
+.big_pic .next{
+	background:url(images/btn.gif) no-repeat 0 -60px;
+	width: 60px;
+	height: 60px;
+	position: absolute;
+	top: 130px;
+	right: 10px;
+	cursor: pointer;
+	z-index: 3001;
+	filter:alpha(opacity:0);
+	opacity: 0;
+}
+.big_pic .text{
+	position: absolute;
+	top: 300px;
+	left: 20px;
+	z-index: 3000;
+	color: #ccc;
+}
+.big_pic .length{
+	position: absolute;
+	top: 300px;
+	right: 20px;
+	z-index: 3000;
+	color: #ccc;
+}
+.big_pic .bg{
+	position: absolute;
+	bottom:0;
+	left: 0;
+	width: 400px;
+	height: 25px;
+	z-index: 2999;
+	background-color: #000;
+	filter:alpha(opacity:60);
+	opacity: 0.6;
+}
+.big_pic .mark_left{
+	width: 200px;
+	height: 320px;
+	background-color: green;
+	z-index: 3000;
+	position: absolute;
+	top: 0;
+	left: 0;
+	filter:alpha(opacity:0);
+	opacity: 0;
+}
+.big_pic .mark_right{
+	width: 200px;
+	height: 320px;
+	background-color: red;
+	z-index: 3000;
+	position: absolute;
+	top: 0;
+	right: 0;
+	filter:alpha(opacity:0);
+	opacity: 0;
+}
+.small_pic{
+	width: 400px;
+	height: 94px;
+	position:relative;
+	top:7px;
+	left: 10px;
+	
+}
+.small_pic ul { 
+	height: 94px; 
+	position: absolute;
+	top: 0; 
+	left: 0; 
+	
+}
+.small_pic li{
+	float: left;
+	padding-right: 10px;
+	background: url(images/loading.gif) no-repeat center center; 
+	cursor: pointer; 
+	filter: alpha(opacity=60); 
+	opacity: 0.6;
+	/*z-index: 4000;*/
+}
+.small_pic img { 
+	width: 120px; 
+	height: 94px; 
+	/*z-index: 4000;*/
+}
