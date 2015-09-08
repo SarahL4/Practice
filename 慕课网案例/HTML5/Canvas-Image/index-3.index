@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Canvas Image</title>
+</head>
+<body style="background:black">
+
+    <canvas id="canvas" style="display:block;margin:0 auto;border:1px solid #aaa;"> 
+        您的浏览器尚不支持canvas
+    </canvas>
+    
+    <input type="range" id="scale-range" min="0.5" max="3.0" step="0.01" value="1.0" style="display:block;width:800px;margin:20px auto" />
+    
+    <canvas id="watermark-canvas" style="display:none;margin:0 auto;border:1px solid #aaa;">
+        您的浏览器尚不支持canvas
+    </canvas>
+
+    <script type="text/javascript">
+        var canvas = document.getElementById('canvas');
+        var context = canvas.getContext('2d');                //获取canvas上下文绘图环境
+        var slider = document.getElementById('scale-range');  //获取滑动条对象
+        var watermarkCanvas = document.getElementById('watermark-canvas');  //获取绘制水印id对象
+        var watermarkContext = watermarkCanvas.getContext('2d');             //获取水印上下文绘图环境
+
+        var image = new Image();                        //初始化图片对象           
+
+        window.onload = function(){
+            canvas.width = 1152;                        //画布大小
+            canvas.height = 768; 
+            var scale = slider.value;                   //获取当前滑动条value值
+
+            image.src = "img/img-lg.jpg";  
+            image.onload = function(){                 //等待图片加载完成后才进行绘制
+                drawImage(image,scale);                      //绘制图片
+
+                slider.onmousemove = function(){        //滑动条鼠标滑动事件
+                    scale = slider.value;
+                    drawImage(image,scale);
+                }
+            }
+
+            //setup watermark canvas
+            watermarkCanvas.width = 600;
+            watermarkCanvas.height = 100;
+
+            watermarkContext.font = "bold 50px Arial";
+            watermarkContext.lineWidth = "1";
+            watermarkContext.fillStyle = "rgba(255,255,255,0.5)";
+            watermarkContext.textBaseline = "middle";
+            watermarkContext.fillText ("== Loogeek ==",20,50);
+        }
+        function drawImage(image,scale){
+            var imageWidth = 1152 * scale;                      //缩放后图像的宽度和高度
+            var imageHeight = 768 * scale;
+
+            var x = canvas.width/2 - imageWidth/2;              //绘制缩放后图像的起始位置
+            var y = canvas.height/2 - imageHeight/2;
+
+            context.clearRect(0,0,canvas.width,canvas.height);  //每次绘制图片前要清除画布图像
+            context.drawImage(image,x,y,imageWidth,imageHeight);//从x,y坐标开始绘制大小为imageWidth和
+                                                                //imageHeight的图片
+            context.drawImage( watermarkCanvas , canvas.width - watermarkCanvas.width + 220 ,
+                                                 canvas.height - watermarkCanvas.height + 20 );
+        }
+
+    </script>
+</body>
+</html>

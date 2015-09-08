@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Canvas Image</title>
+</head>
+<body>
+
+	<canvas id="canvas" style="display:block;margin:0 auto;border:1px solid #aaa;"> 
+		您的浏览器尚不支持canvas
+	</canvas>
+
+	<script type="text/javascript">
+		var canvas = document.getElementById('canvas');
+		var context = canvas.getContext('2d');         //获取canvas上下文绘图环境
+		var image = new Image();       				   
+
+		window.onload = function(){
+			canvas.width = 1152;                        //画布大小
+			canvas.height = 768; 
+			image.src = "img/img.jpg";  
+			image.onload = function(){                 //等待图片加载完成后才进行绘制
+				context.drawImage(image,0,0);          //绘制图片
+			}
+		}
+	</script>
+</body>
+</html>
