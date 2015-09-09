@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Canvas Image</title>
+</head>
+<body style="background:black">
+    <!-- 画布canvas -->
+    <canvas id="canvas" style="display:block;margin:0 auto;border:1px solid #aaa;"> 
+        您的浏览器尚不支持canvas
+    </canvas>
+    <!-- 放大镜canvas -->
+    <canvas id="offCanvas" style="display:none">
+        您的浏览器尚不支持canvas
+    </canvas>
+    <!-- 水印canvas -->
+    <canvas id="watermark-canvas" style="display:none;margin:0 auto;border:1px solid #aaa;">
+        您的浏览器尚不支持canvas
+    </canvas>
+    <!-- 滚动条 -->
+    <input type="range" id="scale-range" min="0.5" max="3.0" step="0.01" value="1.0" style="display:block;width:800px;margin:20px auto" />
+
+    <script type="text/javascript">
+        var canvas = document.getElementById('canvas');       //获取展示图片canvas对象
+        var context = canvas.getContext('2d');                //获取canvas上下文绘图环境
+        var offCanvas = document.getElementById('offCanvas'); //获取放大镜canvas对象
+        var offContext = offCanvas.getContext('2d');          //放大镜上下文绘图环境  
+        var slider = document.getElementById('scale-range');  //获取滑动条对象
+        var watermarkCanvas = document.getElementById('watermark-canvas');  //获取绘制水印id对象
+        var watermarkContext = watermarkCanvas.getContext('2d');             //获取水印上下文绘图环境
+        var image = new Image();                        //初始化图片对象           
+        var isMouseDown = false;                        //判断鼠标是否按下
+        var scale = slider.value;                       //获取当前滑动条value值
+
+        window.onload = function(){
+            canvas.width = 1152;                        //画布大小
+            canvas.height = 768; 
+            image.src = "img/img-lg.jpg";               //设置显示图片为大图 width：3456  height：2304
+
+            //设置水印大小
+            watermarkCanvas.width = 600;
+            watermarkCanvas.height = 100;
+
+            watermarkContext.font = "bold 50px Arial";        //设置水印字体样式
+            watermarkContext.lineWidth = "1";   
+            watermarkContext.fillStyle = "rgba(255,255,255,0.5)";//设置水印字体颜色及透明度
+            watermarkContext.textBaseline = "middle";
+            watermarkContext.fillText ("== Loogeek ==",20,50);
+
+            image.onload = function(){                 //等待图片加载完成后才进行绘制
+
+                offCanvas.width = image.width;         //放大镜大小为大图片大小
+                offCanvas.height = image.height;
+
+                context.drawImage(image,0,0,canvas.width,canvas.height);//在画布中绘制图片
+                offContext.drawImage(image,0,0);        //绘制放大镜中显示的原图片，因为在canvas中设置了
+                                                        //display：none,所以没有在页面中显示出来
+                //drawImage(image);                       //绘制图片
+                //绘制水印
+                context.drawImage( watermarkCanvas , canvas.width - watermarkCanvas.width + 220 ,
+                                                     canvas.height - watermarkCanvas.height + 20 );
+                slider.onmousemove = function(){        //滑动条鼠标滑动事件
+                   scale = slider.value;
+                   drawImage(image,scale);
+                }
+            }
+
+            function drawImage(image,scale){
+                var imageWidth = 1152 * scale;                   //缩放后图像的宽度和高度
+                var imageHeight = 768 * scale;
+
+                var LImageWidth = 3456 * scale;                  //缩放后放大器原图的宽度和高度
+                var LImageHeight = 2304 * scale;
+
+                var x = canvas.width/2 - imageWidth/2;           //绘制缩放后图像的起始位置
+                var y = canvas.height/2 - imageHeight/2;
+
+                var Lx = offCanvas.width/2 - LImageWidth/2;      //绘制缩放后放大器图像的起始位置
+                var Ly = offCanvas.height/2 - LImageHeight/2;
+
+                context.clearRect(0,0,canvas.width,canvas.height);  //每次绘制图片前要清除画布图像
+                offContext.clearRect(0,0,offCanvas.width,offCanvas.height);//清除放大器画布图像
+                //从x,y坐标开始绘制大小为imageWidth和imageHeight的图片
+                context.drawImage(image,x,y,imageWidth,imageHeight);
+                //从Lx,Ly坐标开始绘制大小为LImageWidth和LImageHeight的图片                                           
+                offContext.drawImage(image,Lx,Ly,LImageWidth,LImageHeight);
+                //绘制水印
+                context.drawImage( watermarkCanvas , canvas.width - watermarkCanvas.width + 220 ,
+                                                     canvas.height - watermarkCanvas.height + 20 );
+            }
+
+            //鼠标按下去事件
+            canvas.onmousedown = function(e){
+                e.preventDefault();                             //阻止鼠标默认事件
+                isMouseDown = true;                             //鼠标按下时将判断鼠标是否按下的标志位设为true
+                var point = windowToCanvas(e.clientX,e.clientY);//获取鼠标在canvas画布中的位置
+                drawImage(image,scale);
+                drawMagnifier(true,point);
+            }
+
+            //鼠标移动去事件
+            canvas.onmousemove = function(e){
+                e.preventDefault();
+                if(isMouseDown == true){                        //鼠标按下时移动才执行下面程序
+                    point = windowToCanvas(e.clientX,e.clientY);
+                    drawImage(image,scale);
+                    drawMagnifier(true,point);
+                }
+            }
+
+            //鼠标起来去事件
+            canvas.onmouseup = function(e){
+                e.preventDefault();
+                isMouseDown = false;                             //鼠标抬起时标志位为false   
+                drawImage(image,scale);
+                drawMagnifier(false);
+            }
+
+            //鼠标移出去事件
+            canvas.onmouseout = function(e){
+                e.preventDefault();
+                isMouseDown = false;                             //鼠标移出画布时标志位也为false 
+                drawImage(image,scale);
+                drawMagnifier(false);
+            }
+
+        }
+
+        //将canvas的坐标位置，鼠标位置减去canvas坐标位置得到鼠标在canvas中的位置
+        function windowToCanvas(x,y){   
+            var bbox = canvas.getBoundingClientRect();
+            return {x:x-bbox.left,y:y-bbox.top};
+        }
+
+        //绘制放大镜
+        function drawMagnifier(isShowMagnifier,point){
+            if(isShowMagnifier == true){    //如果isShowMagnifier为true才绘制放大镜
+                var mr = 200;               //放大器半径
+                //因为放大镜原图是显示图片大小的3倍，所以放大镜对应的鼠标位置是在canvas显示画布位置的3倍
+                var imageLG_cx = point.x * 3;
+                var imageLG_cy = point.y * 3;
+
+                var sx = imageLG_cx - mr;   //放大镜中显示图片的位置
+                var sy = imageLG_cy - mr;
+
+                var dx = point.x - mr;      //在canvas画布该坐标中显示放大镜
+                var dy = point.y - mr;
+
+                context.save();             //绘制放大镜前先保存图像
+                context.lineWidth = 10.0;   //放大镜外边框大小
+                context.strokeStyle = "#069";//放大镜外边框颜色
+
+                context.beginPath();         
+                context.arc(point.x,point.y,mr,0,Math.PI*2,false);//顺时针在point位置绘制半径为mr的圆形
+                context.stroke();            //绘制放大镜外边框
+                context.clip();              //将放大镜图像裁剪为圆形
+                context.drawImage(offCanvas,sx,sy,2*mr,2*mr,dx,dy,2*mr,2*mr);//绘制放大镜
+                context.restore();
+            }
+        }
+        
+    </script>
+</body>
+</html>
